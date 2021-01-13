@@ -1,4 +1,3 @@
-require './lib/item'
 
 class FoodTruck
 
@@ -7,21 +6,39 @@ class FoodTruck
 
   def initialize(name)
     @name = name
-    @inventory = Hash.new { |hash, key| hash[key] = 0 }
+    @inventory = {}
   end
 
-  def stock(item, value)
-      @inventory[item] += value
-  end
 
   def check_stock(item)
-    @inventory.values
+    if @inventory[item]
+      @inventory[item]
+    else
+      0
+    end
   end
 
-#Need to fix this method with array to integer issue
+  def stock(item, quantity)
+    if check_stock(item) == 0
+      @inventory[item] = quantity
+    else
+      @inventory[item] += quantity
+    end
+  end
+
+  def sell(item, quantity)
+    @inventory[item] -= quantity
+  end
+  
+  def sell_item?(name)
+    @inventory.keys.any? do |item|
+      item.name == name
+    end
+  end
+
   def potential_revenue
-    @inventory.sum do |item, amount|
-      item.convert_to_integer * amount
+    @inventory.keys.sum do |item|
+      check_stock(item) * item.price
     end
   end
 
